@@ -5,6 +5,7 @@ load(":modules.bzl", "get_gki_modules_list")
 
 _IMAGE_OUTS = [
     "Image",
+    "Image.gz",
     "Image.lz4",
     "System.map",
     "modules.builtin",
@@ -81,7 +82,7 @@ def amlogic_kernel_platform(
         strip_modules = True,
         module_outs = module_outs,
         module_implicit_outs = gki_modules,
-        make_goals = ["Image", "Image.lz4", "modules"] +
+        make_goals = ["Image", "Image.gz", "Image.lz4", "modules"] +
                      ["amlogic/" + o for o in dtb_outs] + (make_goals or []),
     )
 
