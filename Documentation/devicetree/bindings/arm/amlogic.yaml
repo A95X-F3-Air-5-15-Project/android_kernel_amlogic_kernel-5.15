@@ -21,6 +21,21 @@ description: |+
   stable binding/ABI.
 
 properties:
+  cpus:
+    type: object
+    properties:
+      amlogic,legacy-suspend-mpidr:
+        type: boolean
+        description: |
+          Enable legacy SM1 suspend context indexing for device trees using
+          CPU reg values 0, 1, 2 and 3 with older Amlogic BL31 firmware.
+          Shift the affinity mask left by eight bits when constructing the
+          suspend context hash, matching hardware core IDs in Aff1.
+          Omit this property
+          when CPU reg values already describe hardware affinities as
+          0, 0x100, 0x200 and 0x300. This does not change PSCI CPU_ON targets.
+    additionalProperties: true
+
   $nodename:
     const: '/'
   compatible:

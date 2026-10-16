@@ -26,6 +26,7 @@
 #include <linux/panic_notifier.h>
 #include <linux/proc_fs.h>
 #include <linux/memblock.h>
+#include <linux/of.h>
 #include <linux/of_fdt.h>
 #include <linux/efi.h>
 #include <linux/psci.h>
@@ -110,6 +111,7 @@ struct mpidr_hash mpidr_hash;
  */
 static void __init smp_build_mpidr_hash(void)
 {
+	struct device_node *cpus;
 	u32 i, affinity, fs[4], bits[4], ls;
 	u64 mask = 0;
 	/*
@@ -118,6 +120,11 @@ static void __init smp_build_mpidr_hash(void)
 	 */
 	for_each_possible_cpu(i)
 		mask |= (cpu_logical_map(i) ^ cpu_logical_map(0));
+	/* Legacy SM1 DTs encode CPU_ON targets in Aff0, hardware cores in Aff1. */
+	cpus = of_find_node_by_path("/cpus");
+	if (of_property_read_bool(cpus, "amlogic,legacy-suspend-mpidr"))
+		mask <<= 8;
+	of_node_put(cpus);
 	pr_debug("mask of set bits %#llx\n", mask);
 	/*
 	 * Find and stash the last and first bit set at all affinity levels to
